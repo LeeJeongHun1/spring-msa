@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.8'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.palantir.docker' version '0.35.0'
 }
 
 group = 'com.auth'
@@ -15,11 +16,25 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    dockerImageTag = project.hasProperty('dockerImageTag') ? project.dockerImageTag : 'latest'
+}
 dependencies {
-//    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+docker() {
+    // 이미지 repository/name
+    name project.name + ":" + dockerImageTag
+    // tag
+    dockerfile file('./Dockerfile')
+    // 컨테이너에 탑재될 file
+    files tasks.bootJar.outputs.files, file('./dockerize')
+    // 파라미터로 전달할 내용
+    buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
 }

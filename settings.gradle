@@ -1,5 +1,6 @@
 rootProject.name = 'spring-boot-msa'
 include ':auth-server'
 include ':api-gateway'
+include ':order'
 include ':eureka'
 include ':common'

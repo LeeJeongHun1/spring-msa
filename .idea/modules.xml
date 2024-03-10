@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api-gateway/spring-boot-msa.api-gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api-gateway/spring-boot-msa.api-gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-server/spring-boot-msa.auth-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-server/spring-boot-msa.auth-server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/spring-boot-msa.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/spring-boot-msa.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka/spring-boot-msa.eureka.main.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka/spring-boot-msa.eureka.main.iml" />
+    </modules>
+  </component>
+</project>

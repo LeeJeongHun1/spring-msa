@@ -41,20 +41,21 @@ public class TokenProvider implements InitializingBean {
     private Key confirmKey;
 
     public TokenProvider(
-            @Value("${jwt.access-secret}") String accessSecret,
-            @Value("${jwt.refresh-secret}") String refreshSecret,
-            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
-            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
-        this.accessSecret = accessSecret;
-        this.refreshSecret = refreshSecret;
-        this.accessTokenValidityInMilliseconds = accessTokenValidityInSeconds * 1000;
-        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000;
+//            @Value("${jwt.access-secret}") String accessSecret,
+//            @Value("${jwt.refresh-secret}") String refreshSecret,
+//            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
+//            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds
+    ) {
+        this.accessSecret = "d";
+        this.refreshSecret = "d";
+        this.accessTokenValidityInMilliseconds = 1000;
+        this.refreshTokenValidityInMilliseconds = 1000;
     }
 
     @Override
     public void afterPropertiesSet() {
-        this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecret));
-        this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
+//        this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecret));
+//        this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
     }
 
     public String createAccessToken(Authentication authentication) {

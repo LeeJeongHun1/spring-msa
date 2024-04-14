@@ -1,11 +1,15 @@
 package com.authserver.service;
 
 import com.authserver.dto.JoinRequest;
+import com.authserver.dto.LoginRequest;
 import com.authserver.entity.Account;
 import com.authserver.repository.AccountRepository;
+import com.common.config.exception.GlobalException;
+import com.common.enums.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,19 +20,32 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final AccountRepository accountRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final PasswordEncoder passwordEncoder;
+
+//    private final ApplicationEventPublisher applicationEventPublisher;
 
     public void join(JoinRequest request) {
-        log.info("join start");
+        if (accountRepository.findByUserId(request.getUserId()).isPresent()) {
+            throw new GlobalException(ResponseCode.EXIST_EMAIL);
+        }
 
-        Account account = Account.create(request);
-//        accountRepository.save(account);
-        log.info("account save");
+        Account account = Account.builder()
+                .userId(request.getUserId())
+                .name(request.getName())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+        accountRepository.save(account);
+    }
 
-        // send join Email
-        log.info("event publish");
-        applicationEventPublisher.publishEvent(request);
+    public void login(LoginRequest request) {
+        Account account = accountRepository.findByUserId(request.getUserId())
+                .orElseThrow(() -> new GlobalException(ResponseCode.NOT_FOUND_ACCOUNT));
 
-        log.info("join end");
+        if (!passwordEncoder.matches(account.getPassword(), request.getPassword())) {
+            throw new GlobalException(ResponseCode.INVALID_PASSWORD);
+        }
+
+        // token 반환.
+
     }
 }

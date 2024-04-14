@@ -2,27 +2,40 @@ package com.authserver.controller;
 
 import com.authserver.dto.JoinRequest;
 import com.authserver.service.AuthService;
+import com.common.domain.GlobalBody;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
+@Tag(name = "인증 API", description = "인증 서비스")
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/v1/")
 public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping
-    public ResponseEntity<String> home() {
-        JoinRequest request = JoinRequest.builder()
-                .userId("test@gmail.com")
-                .name("아무개")
-                .password("q1w2e3!@")
-                .build();
+    @Operation(summary = "로그인", description = "로그인을 요청한다.")
+    @ApiResponse(responseCode = "200", content = @Content())
+    @PostMapping("/login")
+    public ResponseEntity<GlobalBody<Void>> login() {
+        return ResponseEntity.ok(GlobalBody.success());
+    }
+
+
+    @Operation(summary = "회원가입", description = "회원가입을 요청한다.")
+    @ApiResponse(responseCode = "200", content = @Content())
+    @PostMapping("/join")
+    public ResponseEntity<GlobalBody<Void>> join(
+            @RequestBody @Valid JoinRequest request
+    ) {
         authService.join(request);
-        return ResponseEntity.ok("auth service");
+        return ResponseEntity.ok(GlobalBody.success());
     }
 }

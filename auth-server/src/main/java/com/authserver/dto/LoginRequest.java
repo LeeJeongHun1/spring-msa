@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @NotNull
-public class JoinRequest {
+public class LoginRequest {
 
     @Schema(description = "userId (email)", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank @Email
@@ -22,8 +22,4 @@ public class JoinRequest {
     @Schema(description = "password", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
     private String password;
-    @Schema(description = "name", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank
-    private String name;
-
 }

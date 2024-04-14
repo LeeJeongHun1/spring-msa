@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: order
+    name: order-service
   jpa:
     show-sql: true
     generate-ddl: true

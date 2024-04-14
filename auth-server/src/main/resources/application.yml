@@ -35,3 +35,8 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
+jwt:
+  access-secret: Zw7OlBM3U57ImxMLhgZjUjnupLvpJw9mRolhoo5m57EW8NaJplxGbuYROoHriX4qKUGuIsGZvZDxcCzWHrnhvg
+  refresh-secret: Zw7OlBM3U57ImxMLhgZjUjnupLvpJw9mRolhoo5m57EW8NaJplxGbuYROoHriX4qKUGuIsGZvZDxcCzWHrnhvg
+  access-token-validity-in-seconds: 3600
+  refresh-token-validity-in-seconds: 2592000

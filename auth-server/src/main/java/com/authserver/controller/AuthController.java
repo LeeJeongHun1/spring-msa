@@ -1,6 +1,8 @@
 package com.authserver.controller;
 
 import com.authserver.dto.JoinRequest;
+import com.authserver.dto.LoginRequest;
+import com.authserver.dto.TokenResponse;
 import com.authserver.service.AuthService;
 import com.common.domain.GlobalBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,8 @@ public class AuthController {
     @Operation(summary = "로그인", description = "로그인을 요청한다.")
     @ApiResponse(responseCode = "200", content = @Content())
     @PostMapping("/login")
-    public ResponseEntity<GlobalBody<Void>> login() {
-        return ResponseEntity.ok(GlobalBody.success());
+    public ResponseEntity<GlobalBody<TokenResponse>> login(@RequestBody @Valid LoginRequest request) {
+        return ResponseEntity.ok(GlobalBody.successWithData(authService.login(request)));
     }
 
 
@@ -38,4 +39,12 @@ public class AuthController {
         authService.join(request);
         return ResponseEntity.ok(GlobalBody.success());
     }
+
+    @Operation(summary = "인증된 사용자 API", description = "인증된 사용자만 호출 가능하다.")
+    @ApiResponse(responseCode = "200", content = @Content())
+    @PostMapping("/authenticated")
+    public ResponseEntity<GlobalBody<Void>> authenticated() {
+        return ResponseEntity.ok(GlobalBody.success());
+    }
+
 }

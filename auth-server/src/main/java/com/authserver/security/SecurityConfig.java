@@ -1,5 +1,8 @@
 package com.authserver.security;
 
+import com.authserver.config.oauth2.CustomOAuth2UserService;
+import com.authserver.config.oauth2.handler.OAuth2SuccessHandler;
+import com.authserver.filter.RequestFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.Advisor;
@@ -14,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,9 +30,11 @@ import java.util.Arrays;
 public class SecurityConfig {
 
 
-//    private final GatewayRequestFilter gatewayRequestFilter;
-//    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-//    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final RequestFilter gatewayRequestFilter;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -37,17 +43,26 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .addFilterBefore(gatewayRequestFilter, UsernamePasswordAuthenticationFilter.class)
-//                .exceptionHandling(exceptionHandler -> exceptionHandler.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-//                .exceptionHandling(exceptionHandler -> exceptionHandler.accessDeniedHandler(jwtAccessDeniedHandler));
+        http
+                .addFilterBefore(gatewayRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandler -> exceptionHandler.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(exceptionHandler -> exceptionHandler.accessDeniedHandler(jwtAccessDeniedHandler));
 
+        http
+                .oauth2Login(oAuth2 ->
+                    oAuth2.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
+                            .successHandler(oAuth2SuccessHandler)
+                );
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((t) -> t
-                        .anyRequest().permitAll());
+                .authorizeHttpRequests((r) -> r
+                        .requestMatchers("/v3/api-docs/**", "auth/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/v1/login", "api/v1/join", "/oAuth-login", "/oAuth-call-back", "/oauth2/authorization/naver", "/login/oauth2/code/naver").permitAll()
+                        .anyRequest().authenticated()
+
+                );
         return http.build();
     }
 
@@ -55,7 +70,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("http://127.0.0.1", "*", "http://localhost:3000", "http://localhost:5173", "https://firstchart.whatailsyou.io/"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Authorization-refresh", "Cache-Control", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh", "Set-Cookie"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -4,16 +4,14 @@ import com.common.config.exception.GlobalException;
 import com.common.enums.ResponseCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.*;
-import org.springframework.data.domain.Page;
-import org.springframework.web.context.request.RequestAttributes;
-
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Getter

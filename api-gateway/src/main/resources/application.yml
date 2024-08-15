@@ -33,6 +33,10 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: oAuth
+          uri: lb://AUTH-SERVER
+          predicates:
+            - Path=/login/**
         - id: order-service
           uri: lb://order-service
           predicates:
@@ -48,3 +52,6 @@ eureka:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+jwt:
+  secret: Zw7OlBM3U57ImxMLhgZjUjnupLvpJw9mRolhoo5m57EW8NaJplxGbuYROoHriX4qKUGuIsGZvZDxcCzWHrnhvg

@@ -6,6 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 
 @Entity
+@Table(name = "account",
+        indexes = {@Index(name = "idx_user_id", columnList = "userId")},
+        uniqueConstraints = @UniqueConstraint(name = "unique_user_id", columnNames = {"userId"}))
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

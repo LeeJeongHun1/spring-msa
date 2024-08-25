@@ -24,7 +24,6 @@ public class Account {
     @Column(nullable = false)
     private String userId;
 
-    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)

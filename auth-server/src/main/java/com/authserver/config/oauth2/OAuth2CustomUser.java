@@ -13,12 +13,12 @@ import java.util.Map;
 public class OAuth2CustomUser implements OAuth2User, Serializable {
 
     private String registrationId;
-    private Map<String, Object> attributes;
+    private OAuthAttributes attributes;
     private List<GrantedAuthority> authorities;
 
     @Override
     public Map<String, Object> getAttributes() {
-        return this.attributes;
+        return this.attributes.getAttributes();
     }
 
     @Override

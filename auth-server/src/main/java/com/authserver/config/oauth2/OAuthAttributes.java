@@ -1,5 +1,7 @@
 package com.authserver.config.oauth2;
 
+import com.common.config.exception.GlobalException;
+import com.common.enums.ResponseCode;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.core.userdetails.User;
@@ -12,6 +14,7 @@ import java.util.Map;
 public class OAuthAttributes {
     private Map<String, Object> attributes;     // OAuth2 반환하는 유저 정보
     private String nameAttributesKey;
+    private String id;
     private String name;
     private String email;
     private String gender;
@@ -26,13 +29,14 @@ public class OAuthAttributes {
             return ofGoogle("sub", attributes);
         } else if ("naver".equals(socialName)) {
             return ofNaver("id", attributes);
+        } else {
+            throw new GlobalException(ResponseCode.NOT_SUPPORTED_SOCIAL);
         }
-
-        return null;
     }
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttributes.builder()
+                .id(String.valueOf(attributes.get("sub")))
                 .name(String.valueOf(attributes.get("name")))
                 .email(String.valueOf(attributes.get("email")))
                 .profileImageUrl(String.valueOf(attributes.get("picture")))
@@ -46,6 +50,7 @@ public class OAuthAttributes {
         Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
         return OAuthAttributes.builder()
+                .id(String.valueOf(attributes.get("id")))
                 .name(String.valueOf(kakaoProfile.get("nickname")))
                 .email(String.valueOf(kakaoAccount.get("email")))
                 .gender(String.valueOf(kakaoAccount.get("gender")))
@@ -60,6 +65,7 @@ public class OAuthAttributes {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
         return OAuthAttributes.builder()
+                .id(String.valueOf(response.get("id")))
                 .name(String.valueOf(response.get("nickname")))
                 .email(String.valueOf(response.get("email")))
                 .profileImageUrl(String.valueOf(response.get("profile_image")))
@@ -70,11 +76,4 @@ public class OAuthAttributes {
                 .build();
     }
 
-//    public User toEntity() {
-//        return User.builder()
-//                .username(name)
-////                .email(email)
-//                .roles(List.of("USER"))
-//                .build();
-//    }
 }

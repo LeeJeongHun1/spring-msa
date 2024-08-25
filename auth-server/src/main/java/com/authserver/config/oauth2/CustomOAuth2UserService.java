@@ -1,9 +1,15 @@
 package com.authserver.config.oauth2;
 
+import com.authserver.entity.Account;
+import com.authserver.entity.Social;
+import com.authserver.enums.SocialType;
+import com.authserver.repository.AccountRepository;
+import com.authserver.repository.SocialRepository;
 import com.common.config.exception.GlobalException;
 import com.common.enums.ResponseCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -12,33 +18,47 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
+    private final AccountRepository accountRepository;
+    private final SocialRepository socialRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> service = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = service.loadUser(userRequest);  // OAuth2 정보를 가져옵니다.
+        OAuth2User oAuth2User = service.loadUser(userRequest);
+        Map<String, Object> originAttributes = oAuth2User.getAttributes();
 
-        Map<String, Object> originAttributes = oAuth2User.getAttributes();  // OAuth2User의 attribute
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        // OAuth2 서비스 id (google, kakao, naver)
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();    // 소셜 정보를 가져옵니다.
-//        if (registrationId.equals("naver")) {
-//            throw new GlobalException(ResponseCode.TOKEN_INVALID_REQUEST);
-//        }
-
-        // OAuthAttributes: OAuth2User의 attribute를 서비스 유형에 맞게 담아줄 클래스
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, originAttributes);
-//        User user = saveOrUpdate(attributes);
-//        String email = user.getEmail();
-//        List<GrantedAuthority> authorities = authorityUtils.createAuthorities(email);
 
-        return new OAuth2CustomUser(registrationId, originAttributes, null);
+        Optional<Account> account = accountRepository.findByUserId(attributes.getEmail());
+        if (account.isEmpty()) { // 가입?
+
+            Account savedAccount = Account.builder()
+                    .userId(attributes.getEmail())
+                    .name(attributes.getName())
+                    .build();
+            accountRepository.save(savedAccount);
+            Social social = Social.builder()
+                    .socialId(attributes.getId())
+                    .account(savedAccount)
+                    .accessToken(userRequest.getAccessToken().getTokenValue())
+                    .socialType(SocialType.of(registrationId))
+                    .socialEmail(attributes.getEmail())
+                    .connectDate(LocalDateTime.now())
+                    .build();
+            socialRepository.save(social);
+        }
+
+        return new OAuth2CustomUser(registrationId, attributes, null);
     }
 }

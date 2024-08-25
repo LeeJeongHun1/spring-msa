@@ -1,6 +1,7 @@
 package com.authserver.security;
 
 import com.authserver.config.oauth2.CustomOAuth2UserService;
+import com.authserver.config.oauth2.handler.OAuth2FailureHandler;
 import com.authserver.config.oauth2.handler.OAuth2SuccessHandler;
 import com.authserver.filter.RequestFilter;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -52,6 +54,7 @@ public class SecurityConfig {
                 .oauth2Login(oAuth2 ->
                     oAuth2.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
                             .successHandler(oAuth2SuccessHandler)
+                            .failureHandler(oAuth2FailureHandler)
                 );
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -59,7 +62,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((r) -> r
                         .requestMatchers("/v3/api-docs/**", "auth/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/login", "api/v1/join", "/oAuth-login", "/oAuth-call-back", "/oauth2/authorization/naver", "/login/oauth2/code/naver").permitAll()
+                        .requestMatchers("/api/v1/login", "api/v1/join", "/oAuth-login").permitAll()
                         .anyRequest().authenticated()
 
                 );
@@ -69,7 +72,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://127.0.0.1", "*", "http://localhost:3000", "http://localhost:5173", "https://firstchart.whatailsyou.io/"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://127.0.0.1", "*", "http://localhost:3000", "http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Authorization-refresh", "Cache-Control", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh", "Set-Cookie"));

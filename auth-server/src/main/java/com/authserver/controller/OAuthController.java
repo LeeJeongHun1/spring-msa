@@ -54,11 +54,11 @@ public class OAuthController {
         return "login";
     }
 
-    @ApiResponse(responseCode = "200", content = @Content())
-    @RequestMapping("/login/oauth2/code/naver")
-    public String callBack() {
-        return "callBack";
-    }
+//    @ApiResponse(responseCode = "200", content = @Content())
+//    @RequestMapping("/login/oauth2/code/naver")
+//    public String callBack() {
+//        return "callBack";
+//    }
 
 
 }

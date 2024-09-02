@@ -24,30 +24,5 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
-//    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public void join(JoinRequest request) {
-        if (accountRepository.findByUserId(request.getUserId()).isPresent()) {
-            throw new GlobalException(ResponseCode.EXIST_EMAIL);
-        }
-
-        Account account = Account.builder()
-                .userId(request.getUserId())
-                .name(request.getName())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
-        accountRepository.save(account);
-    }
-
-    public TokenResponse login(LoginRequest request) {
-        Account account = accountRepository.findByUserId(request.getUserId())
-                .orElseThrow(() -> new GlobalException(ResponseCode.NOT_FOUND_ACCOUNT));
-
-        if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
-            throw new GlobalException(ResponseCode.INVALID_PASSWORD);
-        }
-        // token 반환.
-
-        return tokenProvider.createAccessTokenWithRefreshToken(account);
-    }
 }

@@ -37,4 +37,9 @@ public class Social {
 
     private LocalDateTime connectDate;
 
+    public void login(String accessToken) {
+        this.accessToken = accessToken;
+        this.connectDate = LocalDateTime.now();
+    }
+
 }

@@ -29,12 +29,4 @@ public class Account {
     @Column(nullable = false)
     private String name;
 
-
-//    public static Account create(JoinRequest request) {
-//        return Account.builder()
-//                .userId(request.getUserId())
-//                .password(request.getPassword())
-//                .name(request.getName())
-//                .build();
-//    }
 }

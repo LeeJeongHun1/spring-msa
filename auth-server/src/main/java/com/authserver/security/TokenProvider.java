@@ -37,31 +37,31 @@ public class TokenProvider {
         this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
     }
 
-    public TokenResponse createAccessTokenWithRefreshToken(Account account) {
+    public TokenResponse createAccessTokenWithRefreshToken(String email) {
         return TokenResponse.builder()
-                .accessToken(createAccessToken(account.getUserId(), accessKey))
-                .refreshToken(createRefreshToken(account.getUserId(), refreshKey))
+                .accessToken(createAccessToken(email, accessKey))
+                .refreshToken(createRefreshToken(email, refreshKey))
                 .build();
     }
 
 
-    private String createAccessToken(String userId, Key signKey) {
+    private String createAccessToken(String email, Key signKey) {
         long now = new Date().getTime();
         Date expireDate = new Date(now + accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(email)
                 .signWith(signKey, SignatureAlgorithm.HS512)
                 .setExpiration(expireDate)
                 .compact();
     }
 
-    private String createRefreshToken(String userId, Key signKey) {
+    private String createRefreshToken(String email, Key signKey) {
         long now = new Date().getTime();
         Date expireDate = new Date(now + refreshTokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(email)
                 .signWith(signKey, SignatureAlgorithm.HS512)
                 .setExpiration(expireDate)
                 .compact();

@@ -42,14 +42,14 @@ public class GlobalException extends RuntimeException {
         this.errorCode = responseCode.getStatus();
         this.httpStatus = responseCode.getHttpStatus();
     }
-//
-//    public GlobalException(ResponseCode responseCode, Object data) {
-//        super(responseCode.getMessage());
-//        this.errorCode = responseCode.getStatus();
-//        this.httpStatus = responseCode.getHttpStatus();
-//        this.data = data;
-//    }
-//
+
+    public GlobalException(ResponseCode responseCode, Object data) {
+        super(responseCode.getMessage());
+        this.errorCode = responseCode.getStatus();
+        this.httpStatus = responseCode.getHttpStatus();
+        this.data = data;
+    }
+
 //    public GlobalException(String message, ResponseCode responseCode) {
 //        super(message);
 //        this.errorCode = responseCode.getStatus();

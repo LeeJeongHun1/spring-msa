@@ -1,5 +1,7 @@
 package com.authserver.config.oauth2.handler;
 
+import com.authserver.config.oauth2.OAuth2CustomUser;
+import com.authserver.dto.TokenResponse;
 import com.authserver.security.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +24,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        response.sendRedirect(URI);
+        // token create
+        OAuth2CustomUser oAuth2CustomUser = (OAuth2CustomUser) authentication.getPrincipal();
+        TokenResponse accessTokenWithRefreshToken = tokenProvider.createAccessTokenWithRefreshToken(oAuth2CustomUser.getUsername());
+        response.sendRedirect(URI + "/" + accessTokenWithRefreshToken.getAccessToken());
     }
 
 

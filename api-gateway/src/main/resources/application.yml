@@ -1,24 +1,57 @@
 server:
   port: 8001
+  servlet:
+    register-default-servlet: true
 
 spring:
   application:
     name: api-gateway
+  profiles:
+    active: local
   main:
     web-application-type: reactive
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+      httpserver:
+        wiretap: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+        - AuthenticationFilter
       routes:
+        - id: openapi
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/v3/api-docs/**
+          filters:
+            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
         - id: auth-service
           uri: lb://AUTH-SERVER
           predicates:
             - Path=/auth/**
           filters:
             - StripPrefix=1
-      default-filters:
-        - AuthenticationFilter
+        - id: oAuth
+          uri: lb://AUTH-SERVER
+          predicates:
+            - Path=/login/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+jwt:
+  secret: Zw7OlBM3U57ImxMLhgZjUjnupLvpJw9mRolhoo5m57EW8NaJplxGbuYROoHriX4qKUGuIsGZvZDxcCzWHrnhvg

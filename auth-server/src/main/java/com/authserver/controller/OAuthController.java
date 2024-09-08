@@ -31,7 +31,6 @@ import java.security.SecureRandom;
 @RequiredArgsConstructor
 @Tag(name = "oAuth API", description = "oAuth 서비스")
 @Controller
-//@RequestMapping("/api/v1/")
 public class OAuthController {
 
     @Value("${spring.security.oauth2.client.provider.naver.authorization_uri}")
@@ -53,12 +52,5 @@ public class OAuthController {
         model.addAttribute("url", url);
         return "login";
     }
-
-//    @ApiResponse(responseCode = "200", content = @Content())
-//    @RequestMapping("/login/oauth2/code/naver")
-//    public String callBack() {
-//        return "callBack";
-//    }
-
 
 }

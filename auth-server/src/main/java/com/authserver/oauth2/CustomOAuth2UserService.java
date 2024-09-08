@@ -1,4 +1,4 @@
-package com.authserver.config.oauth2;
+package com.authserver.oauth2;
 
 import com.authserver.config.exception.OAuthException;
 import com.authserver.entity.Account;
@@ -9,9 +9,6 @@ import com.authserver.repository.SocialRepository;
 import com.common.config.exception.GlobalException;
 import com.common.enums.ResponseCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;

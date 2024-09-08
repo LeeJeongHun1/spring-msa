@@ -1,8 +1,8 @@
 package com.authserver.security;
 
-import com.authserver.config.oauth2.CustomOAuth2UserService;
-import com.authserver.config.oauth2.handler.OAuth2FailureHandler;
-import com.authserver.config.oauth2.handler.OAuth2SuccessHandler;
+import com.authserver.oauth2.CustomOAuth2UserService;
+import com.authserver.oauth2.handler.OAuth2FailureHandler;
+import com.authserver.oauth2.handler.OAuth2SuccessHandler;
 import com.authserver.filter.RequestFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.method.AuthorizationManagerBeforeMethodInterceptor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -62,7 +61,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((r) -> r
                         .requestMatchers("/v3/api-docs/**", "auth/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/login", "api/v1/join", "/oAuth-login").permitAll()
+                        .requestMatchers("/oAuth-login").permitAll()
                         .anyRequest().authenticated()
 
                 );

@@ -1,40 +1,31 @@
-package com.authserver.config.oauth2.handler;
+package com.authserver.oauth2.handler;
 
+import com.authserver.oauth2.OAuth2CustomUser;
+import com.authserver.dto.TokenResponse;
 import com.authserver.security.TokenProvider;
-import com.common.domain.GlobalBody;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 @RequiredArgsConstructor
 @Component
-public class OAuth2FailureHandler implements AuthenticationFailureHandler {
+public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final ObjectMapper objectMapper;
+    private final TokenProvider tokenProvider;
+    private static final String URI = "/auth/success";
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        response.setContentType(APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("utf-8");
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//        response.sendRedirect("/fail");
-
-        objectMapper.writeValue(response.getWriter(), new GlobalBody<>(HttpStatus.UNAUTHORIZED.value(), exception.getMessage()));
-
-
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        // token create
+        OAuth2CustomUser oAuth2CustomUser = (OAuth2CustomUser) authentication.getPrincipal();
+        TokenResponse accessTokenWithRefreshToken = tokenProvider.createAccessTokenWithRefreshToken(oAuth2CustomUser.getUsername());
+        response.sendRedirect(URI + "/" + accessTokenWithRefreshToken.getAccessToken());
     }
 
 

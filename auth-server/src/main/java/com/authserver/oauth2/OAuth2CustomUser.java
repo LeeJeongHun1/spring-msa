@@ -1,17 +1,15 @@
-package com.authserver.config.oauth2;
+package com.authserver.oauth2;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
-public class OAuth2CustomUser implements OAuth2User, Serializable {
+public class OAuth2CustomUser implements OAuth2User {
 
     private String registrationId;
     private OAuthAttributes attributes;

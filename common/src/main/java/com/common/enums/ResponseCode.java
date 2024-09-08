@@ -29,7 +29,7 @@ public enum ResponseCode {
     INVALID_PARAMETERS(-112, "유효하지 않은 인자 값 입니다.", HttpStatus.BAD_REQUEST.value()),
     RESULT_NOT_FOUND(-114, "결과가 없습니다.", HttpStatus.NOT_FOUND.value()),
     NOT_SUPPORTED_SOCIAL(-115, "지원하지 않은 소셜 서비스입니다.", HttpStatus.CONFLICT.value()),
-    EXIST_ANOTHER_SOCIAL(-116, "다른 소셜 서비스로 가입된 이력이 존재합니다.", HttpStatus.CONFLICT.value()),
+    EXIST_ANOTHER_SOCIAL(-116, "다른 소셜 서비스로 가입된 이력이 존재합니다. ::: ", HttpStatus.CONFLICT.value()),
 
 
     /** [ -910 ~ -999 ] : EXTERNAL_ERROR **/

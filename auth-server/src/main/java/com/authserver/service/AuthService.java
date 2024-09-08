@@ -1,16 +1,11 @@
 package com.authserver.service;
 
-import com.authserver.security.TokenProvider;
-import com.authserver.dto.JoinRequest;
-import com.authserver.dto.LoginRequest;
-import com.authserver.dto.TokenResponse;
-import com.authserver.entity.Account;
+import com.authserver.dto.AccountInfoResponse;
 import com.authserver.repository.AccountRepository;
 import com.common.config.exception.GlobalException;
 import com.common.enums.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final AccountRepository accountRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final TokenProvider tokenProvider;
 
+
+    public AccountInfoResponse getInfo(String userId) {
+        return accountRepository.findAccountInfoByUserId("wjdgns@naver.com")
+                .orElseThrow(() -> new GlobalException(ResponseCode.NOT_FOUND_ACCOUNT));
+    }
 
 }

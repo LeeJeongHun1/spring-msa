@@ -1,12 +1,10 @@
-package com.authserver.config.oauth2;
+package com.authserver.oauth2;
 
 import com.common.config.exception.GlobalException;
 import com.common.enums.ResponseCode;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.core.userdetails.User;
 
-import java.util.List;
 import java.util.Map;
 
 @Builder

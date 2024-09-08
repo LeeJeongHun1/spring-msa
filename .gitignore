@@ -6,6 +6,9 @@ build/
 !**/src/test/**/build/
 **/generated
 volume/
+
+#!**/src/main/**/application.yml
+
 ### STS ###
 .apt_generated
 .classpath
